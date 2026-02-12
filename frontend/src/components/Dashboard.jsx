@@ -1,15 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Play } from 'lucide-react';
+import { Play, Loader2 } from 'lucide-react';
+import { lessonApi } from '../utils/api';
 
 const Dashboard = () => {
-    const currentLesson = {
-        title: "Basic English Conversations",
-        progress: 65,
-        level: "Basic"
+    const [lessons, setLessons] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchLessons = async () => {
+            try {
+                const response = await lessonApi.getAll();
+                setLessons(response.data);
+            } catch (err) {
+                console.error("Error fetching lessons:", err);
+                setError("Failed to load curriculum. Please check if the backend is running.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLessons();
+    }, []);
+
+    const currentLesson = lessons[0] || {
+        title: "No lessons available yet",
+        progress: 0,
+        level: "N/A"
     };
 
     const levels = ["Basic", "Intermediate", "Advanced", "Expert"];
+
+    if (loading) {
+        return (
+            <div className="main-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader2 className="animate-spin" size={48} color="var(--primary)" />
+            </div>
+        );
+    }
 
     return (
         <div className="main-content">
@@ -17,6 +45,12 @@ const Dashboard = () => {
                 <h1 style={{ fontSize: '2rem' }}>ನಮಸ್ಕಾರ! (Hello!)</h1>
                 <p style={{ color: 'var(--text-muted)' }}>ಬನ್ನಿ, ಇಂಗ್ಲಿಷ್ ಕಲಿಯೋಣ. (Come, let's learn English.)</p>
             </header>
+
+            {error && (
+                <div style={{ color: '#f87171', marginBottom: '2rem', padding: '1rem', border: '1px solid #f87171', borderRadius: '0.5rem', background: 'rgba(248, 113, 113, 0.1)' }}>
+                    {error}
+                </div>
+            )}
 
             {/* Pick up where you left off */}
             <section style={{ marginBottom: '4rem' }}>
@@ -35,19 +69,19 @@ const Dashboard = () => {
                         <div style={{ maxWidth: '400px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
                                 <span>ಪ್ರಗತಿ (Progress)</span>
-                                <span>{currentLesson.progress}%</span>
+                                <span>{currentLesson.progress || 0}%</span>
                             </div>
                             <div className="progress-bar">
                                 <motion.div
                                     className="progress-fill"
                                     initial={{ width: 0 }}
-                                    animate={{ width: `${currentLesson.progress}%` }}
+                                    animate={{ width: `${currentLesson.progress || 0}%` }}
                                     transition={{ duration: 1 }}
                                 ></motion.div>
                             </div>
                         </div>
                     </div>
-                    <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} disabled={!lessons.length}>
                         <Play size={18} fill="currentColor" />
                         <span>ಪ್ರಾರಂಭಿಸಿ (Start)</span>
                     </button>
@@ -58,26 +92,31 @@ const Dashboard = () => {
             <section>
                 <h3 style={{ marginBottom: '1.5rem' }}>ನಿಮ್ಮ ಕಲಿಕೆಯ ಹಾದಿ (Your Learning Path)</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-                    {levels.map((lvl, index) => (
-                        <motion.div
-                            key={lvl}
-                            className="glass-card"
-                            style={{ padding: '1.5rem' }}
-                            whileHover={{ scale: 1.02, borderColor: 'var(--primary)' }}
-                        >
-                            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 'bold' }}>MODULE {index + 1}</span>
-                            <h4 style={{ margin: '0.5rem 0' }}>{lvl} English</h4>
-                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                                Master the {lvl.toLowerCase()} levels of spoken English and grammar.
-                            </p>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '0.8rem' }}>12 Lessons</span>
-                                <button style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                                    ನೋಡಿ (View) →
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))}
+                    {levels.map((lvl, index) => {
+                        const lessonsInLevel = lessons.filter(l => l.level === lvl);
+                        return (
+                            <motion.div
+                                key={lvl}
+                                className="glass-card"
+                                style={{ padding: '1.5rem' }}
+                                whileHover={{ scale: 1.02, borderColor: 'var(--primary)' }}
+                            >
+                                <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 'bold' }}>MODULE {index + 1}</span>
+                                <h4 style={{ margin: '0.5rem 0' }}>{lvl} English</h4>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+                                    {lessonsInLevel.length > 0
+                                        ? `Explore ${lessonsInLevel.length} active lessons in this module.`
+                                        : `Master the ${lvl.toLowerCase()} levels of spoken English and grammar.`}
+                                </p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '0.8rem' }}>{lessonsInLevel.length} Lessons</span>
+                                    <button style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                                        ನೋಡಿ (View) →
+                                    </button>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </section>
         </div>

@@ -75,10 +75,13 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 4. ERROR HANDLING
 // ==========================================
 app.use((err, req, res, next) => {
+    const errorLog = `[${new Date().toISOString()}] ${err.stack}\n`;
+    fs.appendFileSync('error.log', errorLog);
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
 
 app.listen(PORT, () => {
+    console.log(`SERVER RESTART DETECTED: Code Version ${Date.now()}`);
     console.log(`Server running on port ${PORT}`);
 });

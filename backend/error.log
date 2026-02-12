@@ -1,0 +1,72 @@
+[2026-02-11T10:09:48.323Z] Lesson Upload Error: error: password authentication failed for user "user"
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-11T10:19:58.612Z] Lesson Upload Error: error: password authentication failed for user "user"
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-11T11:45:55.160Z] Lesson Upload Error: error: password authentication failed for user "user"
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-11T11:55:31.224Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-11T11:55:36.381Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-11T11:55:37.545Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-11T11:55:38.645Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-11T12:02:58.665Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-11T12:05:59.735Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T05:23:58.638Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T06:59:37.052Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T07:10:05.096Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T07:13:09.399Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T07:14:53.623Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T07:16:18.306Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T07:17:09.575Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T07:17:56.594Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)
+[2026-02-12T07:18:55.151Z] Lesson Upload Error: error: column "description" of relation "lessons" does not exist
+    at D:\AI\AI Full Stack\Simplish FS\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async exports.uploadLesson (D:\AI\AI Full Stack\Simplish FS\backend\controllers\lessonController.js:15:24)

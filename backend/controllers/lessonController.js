@@ -22,7 +22,7 @@ exports.uploadLesson = async (req, res) => {
             lesson: result.rows[0]
         });
     } catch (error) {
-        console.error(error);
+        console.error("Lesson Upload Error:", error);
         res.status(500).json({ message: 'Error creating lesson' });
     }
 };

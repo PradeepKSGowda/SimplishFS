@@ -5,16 +5,17 @@ import {
     Trophy,
     User,
     Settings,
-    Flame
+    Flame,
+    Upload
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const Sidebar = () => {
+const Sidebar = ({ onNavigate, currentView }) => {
     const navItems = [
         { icon: LayoutDashboard, label: 'ಪ್ರಗತಿ (Progress)', id: 'dashboard' },
         { icon: Library, label: 'ನನ್ನ ಲೈಬ್ರರಿ (My Library)', id: 'library' },
         { icon: Trophy, label: 'ಲೀಡರ್ಬೋರ್ಡ್ (Leaderboard)', id: 'leaderboard' },
-        { icon: Flame, label: 'ಸ್ಟ್ರೀಕ್ಸ್ (Streaks)', id: 'streaks' },
+        { icon: Upload, label: 'ಪಾಠ ಅಪ್ಲೋಡ್ (Upload)', id: 'admin' },
     ];
 
     return (
@@ -28,11 +29,25 @@ const Sidebar = () => {
                     <motion.div
                         key={item.id}
                         whileHover={{ x: 5, backgroundColor: 'rgba(255,255,255,0.05)' }}
+                        onClick={() => onNavigate(item.id)}
                         className="flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-colors"
-                        style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', borderRadius: '0.5rem' }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '1rem',
+                            padding: '0.75rem 1rem',
+                            borderRadius: '0.5rem',
+                            backgroundColor: currentView === item.id ? 'rgba(56, 189, 248, 0.1)' : 'transparent'
+                        }}
                     >
-                        <item.icon size={20} color="var(--primary)" />
-                        <span style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>{item.label}</span>
+                        <item.icon size={20} color={currentView === item.id ? "var(--primary)" : "var(--text-muted)"} />
+                        <span style={{
+                            fontSize: '0.9rem',
+                            color: currentView === item.id ? 'var(--text-main)' : 'var(--text-muted)',
+                            fontWeight: currentView === item.id ? '600' : '400'
+                        }}>
+                            {item.label}
+                        </span>
                     </motion.div>
                 ))}
             </nav>
