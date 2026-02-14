@@ -1,0 +1,21 @@
+const { Client } = require('pg');
+require('dotenv').config();
+
+async function run() {
+    const client = new Client({ connectionString: process.env.DATABASE_URL });
+    try {
+        await client.connect();
+        const res = await client.query("SELECT * FROM users LIMIT 1");
+        if (res.rows.length > 0) {
+            console.log('Columns:', Object.keys(res.rows[0]));
+        } else {
+            const res2 = await client.query("SELECT column_name FROM information_schema.columns WHERE table_name = 'users'");
+            console.log('Columns (empty table):', res2.rows.map(r => r.column_name));
+        }
+    } catch (err) {
+        console.error(err);
+    } finally {
+        await client.end();
+    }
+}
+run();

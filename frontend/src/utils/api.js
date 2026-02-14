@@ -14,14 +14,26 @@ export const lessonApi = {
     upload: (formData) => api.post('/lessons/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     }),
+    update: (id, formData) => api.put(`/lessons/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    delete: (id) => api.delete(`/lessons/${id}`),
 };
 
 export const assessmentApi = {
     getByLesson: (lessonId) => api.get(`/assessments/lesson/${lessonId}`),
-    submit: (payload) => api.post('/assessments/submit', payload),
+    upsertQuestions: (lessonId, questions) => api.post(`/assessments/lesson/${lessonId}/questions`, { questions }),
+    submit: (formData) => api.post('/assessments/submit', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
     processMedia: (formData) => api.post('/assessments/process-media', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     }),
+};
+
+export const authApi = {
+    login: (credentials) => api.post('/auth/login', credentials),
+    register: (userData) => api.post('/auth/register', userData),
 };
 
 export default api;

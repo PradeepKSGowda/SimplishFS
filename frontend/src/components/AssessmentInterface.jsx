@@ -42,7 +42,7 @@ const AssessmentInterface = ({ lessonId = 'any' }) => {
         try {
             let userResultText = "";
 
-            if (q.type === 'MCQ') {
+            if (q.type === 'MCQ' || q.type === 'Text') {
                 userResultText = selectedOption;
             } else if (q.type === 'Voice' || q.type === 'Image') {
                 if (!currentMedia) return;
@@ -56,8 +56,13 @@ const AssessmentInterface = ({ lessonId = 'any' }) => {
                 console.log(`Extracted text: ${userResultText}`);
             }
 
-            const isCorrect = userResultText.toLowerCase().trim() === (q.correct_answer || "").toLowerCase().trim() ||
-                (q.type === 'MCQ' && userResultText === q.correct_answer);
+            const cleanText = (text) => (text || "").toString().trim().toLowerCase().replace(/[^a-z0-9\u0C80-\u0CFF\s]/gi, "");
+
+            const userClean = cleanText(userResultText);
+            const correctClean = cleanText(q.correct_answer);
+
+            // Resilient check: compare cleaned versions, or exact match for index/strings
+            const isCorrect = userClean === correctClean && userClean !== "";
 
             setAnswers({ ...answers, [q.id]: userResultText });
             setFeedback(isCorrect ? 'correct' : 'incorrect');
@@ -104,12 +109,53 @@ const AssessmentInterface = ({ lessonId = 'any' }) => {
 
     if (isFinished) {
         return (
-            <div className="flex flex-col items-center justify-center p-10 glass-card">
-                <Trophy size={64} color="var(--primary)" />
-                <h2 className="mt-4">ಅಭಿನಂದನೆಗಳು! (Congratulations!)</h2>
-                <p>ನಿಮ್ಮ ಸ್ಕೋರ್ (Your Score): {resultData?.score}%</p>
-                <p>{resultData?.passed ? 'ನೀವು ಉತ್ತೀರ್ಣರಾಗಿದ್ದೀರಿ! (You Passed!)' : 'ಇನ್ನೂ ಸ್ವಲ್ಪ ಪ್ರಯತ್ನಿಸಿ (Keep Practicing)'}</p>
-                <button className="btn btn-primary mt-6" onClick={() => window.location.reload()}>Finish</button>
+            <div className="flex flex-col items-center justify-center p-10 glass-card text-center" style={{ minHeight: '400px' }}>
+                <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', damping: 12 }}
+                >
+                    <Trophy size={80} color="var(--primary)" style={{ filter: 'drop-shadow(0 0 15px var(--primary))' }} />
+                </motion.div>
+
+                <h2 className="mt-6" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+                    {resultData?.passed ? 'ಅಭಿನಂದನೆಗಳು! (Congratulations!)' : 'ಉತ್ತಮ ಪ್ರಯತ್ನ! (Good Effort!)'}
+                </h2>
+
+                <div style={{ margin: '2rem 0', position: 'relative' }}>
+                    <svg width="120" height="120" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
+                        <motion.circle
+                            cx="60" cy="60" r="54" fill="none"
+                            stroke="var(--primary)" strokeWidth="8"
+                            strokeLinecap="round"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: (resultData?.score || 0) / 100 }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            transform="rotate(-90 60 60)"
+                        />
+                    </svg>
+                    <div style={{
+                        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                        fontSize: '1.8rem', fontWeight: 'bold'
+                    }}>
+                        {resultData?.score}%
+                    </div>
+                </div>
+
+                <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '300px' }}>
+                    {resultData?.passed
+                        ? 'ನೀವು ಯಶಸ್ವಿಯಾಗಿ ಉತ್ತೀರ್ಣರಾಗಿದ್ದೀರಿ! (You have successfully passed!)'
+                        : 'ಮುಂದಿನ ಬಾರಿ ಇನ್ನಷ್ಟು ಉತ್ತಮವಾಗಿ ಮಾಡಿ. (Better luck next time.)'}
+                </p>
+
+                <button
+                    className="btn btn-primary mt-8"
+                    onClick={() => window.location.href = '/'}
+                    style={{ padding: '0.75rem 3rem', fontSize: '1.1rem', fontWeight: 'bold' }}
+                >
+                    OK
+                </button>
             </div>
         );
     }
@@ -126,27 +172,45 @@ const AssessmentInterface = ({ lessonId = 'any' }) => {
     const q = questions[currentQuestion];
 
     return (
-        <div className="max-w-2xl mx-auto p-6">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Question {currentQuestion + 1} of {questions.length}</span>
-                <div style={{ width: '100px' }} className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}></div>
+        <div className="max-w-4xl mx-auto p-6">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Question {currentQuestion + 1} of {questions.length}</span>
+                <div style={{ width: '200px', height: '8px', background: 'var(--border)', borderRadius: '4px' }}>
+                    <div className="progress-fill" style={{
+                        width: `${((currentQuestion + 1) / questions.length) * 100}%`,
+                        height: '100%',
+                        background: 'var(--primary)',
+                        borderRadius: '4px',
+                        transition: 'width 0.3s ease'
+                    }}></div>
                 </div>
             </div>
 
             <motion.div
                 key={q.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
                 className="glass-card"
-                style={{ padding: '2.5rem' }}
+                style={{ padding: '3rem', minHeight: '400px', display: 'flex', flexDirection: 'column', backgroundColor: '#ffffff' }}
             >
-                <h2 style={{ marginBottom: '2rem' }}>{q.text}</h2>
+                <div style={{ marginBottom: '2.5rem' }}>
+                    <span style={{
+                        padding: '0.25rem 0.75rem',
+                        background: 'var(--primary-light)',
+                        color: 'var(--primary)',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase'
+                    }}>
+                        {q.type} Assessment
+                    </span>
+                    <h2 style={{ marginTop: '1rem', fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-main)' }}>{q.text}</h2>
+                </div>
 
                 <div style={{ flex: 1 }}>
                     {q.type === 'MCQ' && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             {(q.options || []).map((opt) => (
                                 <motion.div
                                     key={opt}
@@ -154,71 +218,120 @@ const AssessmentInterface = ({ lessonId = 'any' }) => {
                                     onClick={() => !feedback && setSelectedOption(opt)}
                                     className="glass-card"
                                     style={{
-                                        padding: '1.25rem',
+                                        padding: '1.5rem',
                                         cursor: feedback ? 'default' : 'pointer',
                                         borderColor: selectedOption === opt ? 'var(--primary)' : 'var(--border)',
-                                        background: selectedOption === opt ? 'rgba(56, 189, 248, 0.1)' : 'var(--bg-card)',
-                                        transition: 'all 0.2s ease'
+                                        background: selectedOption === opt ? 'var(--primary-light)' : '#ffffff',
+                                        transition: 'all 0.2s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        color: 'var(--text-main)',
+                                        fontWeight: 600
                                     }}
                                 >
+                                    <div style={{
+                                        width: '24px', height: '24px', borderRadius: '50%',
+                                        border: `2px solid ${selectedOption === opt ? 'var(--primary)' : 'var(--border)'}`,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                    }}>
+                                        {selectedOption === opt && <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--primary)' }} />}
+                                    </div>
                                     {opt}
                                 </motion.div>
                             ))}
                         </div>
                     )}
 
+                    {q.type === 'Text' && !feedback && (
+                        <div>
+                            <textarea
+                                className="glass-card"
+                                style={{
+                                    width: '100%', padding: '1.5rem', fontSize: '1.1rem',
+                                    background: '#f8fafc', color: 'var(--text-main)',
+                                    height: '150px', resize: 'none', border: '1px solid var(--border)'
+                                }}
+                                value={selectedOption || ''}
+                                onChange={(e) => setSelectedOption(e.target.value)}
+                                placeholder="ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ (Type your answer here...)"
+                                autoFocus
+                            />
+                        </div>
+                    )}
+
                     {q.type === 'Voice' && !feedback && (
-                        <VoiceRecorder onRecordingComplete={setCurrentMedia} />
+                        <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+                            <VoiceRecorder onRecordingComplete={setCurrentMedia} />
+                        </div>
                     )}
 
                     {q.type === 'Image' && !feedback && (
-                        <ImageUpload onImageSelected={setCurrentMedia} />
+                        <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+                            <ImageUpload onImageSelected={setCurrentMedia} />
+                        </div>
                     )}
 
-                    {feedback && (q.type === 'Voice' || q.type === 'Image') && (
-                        <div className="glass-card" style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.05)', textAlign: 'center' }}>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>DETERMINED ANSWER:</p>
-                            <p style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>"{answers[q.id]}"</p>
-                        </div>
+                    {feedback && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="glass-card"
+                            style={{
+                                padding: '2rem',
+                                background: feedback === 'correct' ? '#f0fdf4' : '#fef2f2',
+                                textAlign: 'center',
+                                border: `1px solid ${feedback === 'correct' ? '#bbf7d0' : '#fecaca'}`
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '1rem', color: feedback === 'correct' ? '#16a34a' : '#dc2626' }}>
+                                {feedback === 'correct' ? <CheckCircle2 size={32} /> : <XCircle size={32} />}
+                                <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                                    {feedback === 'correct' ? 'ಸರಿಯಾಗಿದೆ! (Success!)' : 'ತಪ್ಪಾಗಿದೆ (Try Again)'}
+                                </span>
+                            </div>
+
+                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Your Answer:</p>
+                            <p style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)' }}>"{answers[q.id] || selectedOption || 'No input detected'}"</p>
+
+                            {feedback === 'incorrect' && (
+                                <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
+                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Expected Answer:</p>
+                                    <p style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--primary)' }}>"{q.correct_answer}"</p>
+                                </div>
+                            )}
+                        </motion.div>
                     )}
                 </div>
 
-                <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <AnimatePresence>
-                        {feedback && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    color: feedback === 'correct' ? '#4ade80' : '#f87171',
-                                    fontWeight: 'bold'
-                                }}
-                            >
-                                {feedback === 'correct' ? <CheckCircle2 size={24} /> : <XCircle size={24} />}
-                                <span>{feedback === 'correct' ? 'ಸರಿಯಾಗಿದೆ! (Success!)' : 'ತಪ್ಪಾಗಿದೆ (Try Again)'}</span>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
+                <div style={{ marginTop: '3rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1.5rem' }}>
                     {!feedback ? (
                         <button
                             className="btn btn-primary"
                             onClick={handleCheck}
                             disabled={checking || (!selectedOption && !currentMedia)}
-                            style={{ opacity: (selectedOption || currentMedia) ? 1 : 0.5, marginLeft: 'auto', minWidth: '120px' }}
+                            style={{
+                                padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: 700,
+                                opacity: (selectedOption || currentMedia) ? 1 : 0.5,
+                                backgroundColor: 'var(--primary)', color: '#ffffff'
+                            }}
                         >
-                            {checking ? <Loader2 className="animate-spin" size={18} /> : "Check Answer"}
+                            {checking ? <Loader2 className="animate-spin" size={24} /> : "Check Answer"}
                         </button>
                     ) : (
                         <button
-                            className="btn btn-primary"
+                            className="btn"
                             onClick={handleNext}
-                            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto' }}
+                            style={{
+                                padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: 700,
+                                display: 'flex', alignItems: 'center', gap: '0.75rem',
+                                backgroundColor: currentQuestion + 1 < questions.length ? '#f1f5f9' : '#16a34a',
+                                color: currentQuestion + 1 < questions.length ? 'var(--text-main)' : 'white',
+                                border: currentQuestion + 1 < questions.length ? '1px solid var(--border)' : 'none'
+                            }}
                         >
-                            {currentQuestion + 1 < questions.length ? 'Next' : 'Submit'} <ArrowRight size={18} />
+                            {currentQuestion + 1 < questions.length ? 'Next Question' : 'Submit Assessment'}
+                            <ArrowRight size={20} />
                         </button>
                     )}
                 </div>

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Play, Loader2 } from 'lucide-react';
 import { lessonApi } from '../utils/api';
 
-const Dashboard = () => {
+const Dashboard = ({ user }) => {
     const [lessons, setLessons] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -42,12 +42,12 @@ const Dashboard = () => {
     return (
         <div className="main-content">
             <header style={{ marginBottom: '3rem' }}>
-                <h1 style={{ fontSize: '2rem' }}>ನಮಸ್ಕಾರ! (Hello!)</h1>
+                <h1 style={{ fontSize: '2rem' }}>ನಮಸ್ಕಾರ, {user?.fullName?.split(' ')[0]}! (Hello!)</h1>
                 <p style={{ color: 'var(--text-muted)' }}>ಬನ್ನಿ, ಇಂಗ್ಲಿಷ್ ಕಲಿಯೋಣ. (Come, let's learn English.)</p>
             </header>
 
             {error && (
-                <div style={{ color: '#f87171', marginBottom: '2rem', padding: '1rem', border: '1px solid #f87171', borderRadius: '0.5rem', background: 'rgba(248, 113, 113, 0.1)' }}>
+                <div style={{ color: '#dc2626', marginBottom: '2rem', padding: '1rem', border: '1px solid #fecaca', borderRadius: '0.5rem', background: '#fef2f2' }}>
                     {error}
                 </div>
             )}
@@ -58,7 +58,7 @@ const Dashboard = () => {
                     <span>ಮುಂದುವರಿಸಿ (Continue)</span>
                 </h3>
                 <motion.div
-                    className="glass-card neon-glow"
+                    className="glass-card"
                     style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -99,7 +99,7 @@ const Dashboard = () => {
                                 key={lvl}
                                 className="glass-card"
                                 style={{ padding: '1.5rem' }}
-                                whileHover={{ scale: 1.02, borderColor: 'var(--primary)' }}
+                                whileHover={{ scale: 1.01, borderColor: 'var(--primary)' }}
                             >
                                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 'bold' }}>MODULE {index + 1}</span>
                                 <h4 style={{ margin: '0.5rem 0' }}>{lvl} English</h4>

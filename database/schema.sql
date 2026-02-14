@@ -42,7 +42,7 @@ CREATE TABLE lessons (
     title TEXT NOT NULL,
     description TEXT,
     level TEXT CHECK (level IN ('Basic', 'Intermediate', 'Advanced', 'Expert')) NOT NULL,
-    media_type TEXT CHECK (media_type IN ('pdf', 'audio', 'video')) NOT NULL,
+    media_type TEXT CHECK (media_type IN ('pdf', 'audio', 'video', 'image')) NOT NULL,
     media_url TEXT NOT NULL, -- Path to cloud storage (S3/Supabase)
     display_order INTEGER NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()

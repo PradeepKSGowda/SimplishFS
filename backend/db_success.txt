@@ -1,1 +1,1 @@
-Tables: tracks, lessons, students, questions, users, user_progress
+Tables: tracks, students, lessons, assessments, questions, users, user_progress, assessment_results

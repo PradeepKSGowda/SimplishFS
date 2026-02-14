@@ -1,0 +1,4 @@
+id,question_text,question_type,correct_answer
+804b0a69-b9b5-4878-9e6b-c9bd133741ca,What is the color of the sky?,MCQ,Blue
+52d49bb4-c262-4adb-8d25-30fc62722561,"Say ""Hello"" in English.",Voice,Hello
+f95df276-d84c-4a1c-ae55-bd052b95397c,"Upload an image with the word ""Success"" written on it.",Image,Success

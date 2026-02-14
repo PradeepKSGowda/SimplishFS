@@ -14,21 +14,13 @@ exports.calculateScore = (questions, answers) => {
 
         if (!userAnswer) return;
 
-        switch (q.question_type) {
-            case 'MCQ':
-                if (userAnswer === q.correct_answer) {
-                    earnedPoints += q.points;
-                }
-                break;
-            case 'Text':
-            case 'Voice': // Voice transcription is treated as text
-            case 'Image': // OCR extraction is treated as text
-                if (userAnswer.trim().toLowerCase() === q.correct_answer.toLowerCase()) {
-                    earnedPoints += q.points;
-                }
-                break;
-            default:
-                break;
+        const clean = (text) => (text || "").toString().trim().toLowerCase().replace(/[^a-z0-9\u0C80-\u0CFF\s]/gi, "");
+
+        const userClean = clean(userAnswer);
+        const correctClean = clean(q.correct_answer);
+
+        if (userClean === correctClean && userClean !== "") {
+            earnedPoints += q.points;
         }
     });
 

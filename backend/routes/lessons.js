@@ -12,9 +12,21 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /pdf|mpeg|wav|mp4|png|jpg|jpeg/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        if (extname) {
+            return cb(null, true);
+        }
+        cb(new Error('Only PDF, Audio, Video, and Images (.png, .jpg, .jpeg) are allowed!'));
+    }
+});
 
 router.post('/upload', upload.single('media'), lessonController.uploadLesson);
 router.get('/', lessonController.getAllLessons);
+router.put('/:id', upload.single('media'), lessonController.updateLesson);
+router.delete('/:id', lessonController.deleteLesson);
 
 module.exports = router;

@@ -22,7 +22,8 @@ exports.getAssessmentByLesson = async (req, res) => {
                 id: q.id,
                 text: q.question_text,
                 type: q.question_type,
-                options: q.options // Only for MCQ
+                options: q.options,
+                correct_answer: q.correct_answer
             }))
         });
     } catch (error) {
@@ -103,5 +104,43 @@ exports.processMedia = async (req, res) => {
     } catch (error) {
         console.error("Media Processing Error:", error);
         res.status(500).json({ message: 'Error processing media' });
+    }
+};
+exports.upsertAssessment = async (req, res) => {
+    const { lessonId } = req.params;
+    const { title, questions } = req.body; // questions should be an array
+
+    try {
+        await db.query('BEGIN');
+
+        // 1. Upsert Assessment
+        const assessmentRes = await db.query(
+            `INSERT INTO assessments (lesson_id, title) 
+             VALUES ($1, $2) 
+             ON CONFLICT (lesson_id) DO UPDATE SET title = EXCLUDED.title 
+             RETURNING id`,
+            [lessonId, title || 'Assessment']
+        );
+        const assessmentId = assessmentRes.rows[0].id;
+
+        // 2. Delete existing questions (Simplest approach for sync)
+        // In a production app, you might want to identify specific IDs to update vs delete
+        await db.query('DELETE FROM questions WHERE assessment_id = $1', [assessmentId]);
+
+        // 3. Insert new questions
+        for (const q of questions) {
+            await db.query(
+                `INSERT INTO questions (assessment_id, question_text, question_type, correct_answer, options, points) 
+                 VALUES ($1, $2, $3, $4, $5, $6)`,
+                [assessmentId, q.text, q.type, q.correct_answer, q.options ? JSON.stringify(q.options) : null, q.points || 10]
+            );
+        }
+
+        await db.query('COMMIT');
+        res.json({ message: 'Assessment and questions saved successfully', assessmentId });
+    } catch (error) {
+        await db.query('ROLLBACK');
+        console.error("Upsert Assessment Error:", error);
+        res.status(500).json({ message: 'Error saving assessment' });
     }
 };
